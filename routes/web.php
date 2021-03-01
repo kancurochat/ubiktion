@@ -1,6 +1,8 @@
 <?php
 
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SpotController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +17,26 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('map');
-});
+})->name('home');
 
 Route::get('about', function () {
     return view('about');
-});
+})->name('about');
+
+// Manda la vista de creación de puntos
+Route::get('add', [SpotController::class, 'getView'
+])->middleware(['auth'])->name('add');
+
+// Manda los datos del formulario de creación
+Route::post('add', [SpotController::class, 'createSpot'
+])->middleware(['auth'])->name('add');
+
+Route::get('contact', function () {
+    return view('contact');
+})->middleware(['auth'])->name('contact');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__.'/auth.php';
