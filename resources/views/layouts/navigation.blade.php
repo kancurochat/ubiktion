@@ -110,6 +110,34 @@
 
             <div class="mt-3 space-y-1">
                 <!-- Authentication -->
+                <x-responsive-nav-link :href="route('home')">
+                    {{ __('Mapa') }}
+                </x-responsive-nav-link>
+            </div>
+
+            <div class="mt-3 space-y-1">
+                <!-- Authentication -->
+                <x-responsive-nav-link :href="route('about')">
+                    {{ __('Cómo funciona') }}
+                </x-responsive-nav-link>
+            </div>
+
+            <div class="mt-3 space-y-1">
+                <!-- Authentication -->
+                <x-responsive-nav-link :href="route('add')">
+                    {{ __('Añadir punto') }}
+                </x-responsive-nav-link>
+            </div>
+
+            <div class="mt-3 space-y-1">
+                <!-- Authentication -->
+                <x-responsive-nav-link :href="route('contact')">
+                    {{ __('Contacto') }}
+                </x-responsive-nav-link>
+            </div>
+
+            <div class="mt-3 space-y-1">
+                <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 
@@ -119,16 +147,22 @@
                     </x-responsive-nav-link>
                 </form>
             </div>
+
+
         </div>
     </div>
 </nav>
 
 @elseif (Route::has('login') && !Auth::check())
-<div class="flex flex-row-reverse">
-    <a class="bg-blue-600 hover:bg-blue-500 text-white rounded border-2 p-2 hover:border-blue-dark border-solid m-3 text-xl"
-        href="{{ url('/login') }}">Login</a>
-    <a class="bg-blue-600 hover:bg-blue-500 text-white rounded border-2 p-2 hover:border-blue-dark border-solid m-3 text-xl"
-        href="{{ url('/register') }}">Register</a>
-</div>
+
+
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+    <div class="flex flex-row-reverse">
+        <a class="bg-blue-600 hover:bg-blue-500 text-white rounded border-2 p-2 hover:border-blue-dark border-solid m-3 text-xl"
+            href="{{ url('/login') }}">Login</a>
+        <a class="bg-blue-600 hover:bg-blue-500 text-white rounded border-2 p-2 hover:border-blue-dark border-solid m-3 text-xl"
+            href="{{ url('/register') }}">Register</a>
+    </div>
+</nav>
 
 @endif

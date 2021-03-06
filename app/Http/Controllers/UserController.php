@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Hash;
 use Illuminate\Support\Arr;
     
@@ -19,9 +19,13 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::orderBy('id','DESC')->paginate(5);
-        return view('admin.users.index',compact('users'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        // Recoge el valor de búsqueda de la tabla de usuarios
+        $search = trim($request->get('search'));
+
+        // Ejecuta una consulta mediante Eloquent usando el valor de búsqueda
+        $users = User::where('name', 'LIKE', '%'.$search.'%')->get();
+
+        return view('admin.users.index',compact('users', 'search'));
     }
     
     /**
