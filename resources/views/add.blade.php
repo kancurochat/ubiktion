@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.app')
 
 
 
@@ -37,7 +37,7 @@
         <label class="block col-span-2 md:col-span-1 md:mx-2 my-3 p-1.5">
             <span class="text-gray-700 text-lg">Tipo de punto</span>
             <select
-                class="p-2 block w-full mt-0 px-0.5 border-0 border-b-2 border-blue-light focus:ring-0 focus:border-blue-dark">
+                class="p-2 block w-full mt-0 px-0.5 border-0 border-b-2 border-blue-light focus:ring-0 focus:border-blue-dark" name="spot_type_id">
                 @foreach ($types as $type)
                     <option value="{{$type->id}}">{{$type->type}}</option>
                 @endforeach

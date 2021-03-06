@@ -14,6 +14,8 @@ class SpotTypeSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('spot_types')->delete();
+
         DB::table('spot_types')->insert([
             'type' => 'verde'
         ]);

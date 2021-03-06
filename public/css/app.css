@@ -31785,6 +31785,12 @@ select {
           animation: bounce 1s infinite;
 }
 
+.spot {
+  width: 40px;
+  height: 40px;
+  background-color: black;
+}
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;
@@ -186584,4 +186590,3 @@ select {
             animation: bounce 1s infinite;
   }
 }
-

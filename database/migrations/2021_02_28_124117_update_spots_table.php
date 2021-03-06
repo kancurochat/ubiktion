@@ -14,8 +14,8 @@ class UpdateSpotsTable extends Migration
     public function up()
     {
         Schema::table('spots', function (Blueprint $table) {
-            $table->foreign('spot_type_id')->references('id')->on('spot_types');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('spot_type_id')->references('id')->on('spot_types')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\RoleSeeder;
 use Database\Seeders\SpotTypeSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,8 +16,9 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         $this->call([
-            RoleSeeder::class,
             SpotTypeSeeder::class,
+            PermissionTableSeeder::class,
+            CreateAdminUserSeeder::class,
         ]);
     }
 }

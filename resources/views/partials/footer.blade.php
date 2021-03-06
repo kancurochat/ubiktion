@@ -12,9 +12,9 @@
     <div class="justify-self-center md:justify-self-start">
         <h2 class="p-2 text-2xl">Contacto</h2>
         <ul class="p-2">
-            <li><a class="hover:text-black"  href="#"><span><img class="inline white-text" margin="0" width="30px" src="{{asset('/img/github.svg')}}" alt=""></span> kancurochat</a></li>
-            <li><span><img class="inline white-text" margin="0" width="30px" src="{{asset('/img/email.svg')}}" alt=""></span> hamernad@gmail.com</li>
-            <li><a class="hover:text-black"  href="#"><span><img class="inline white-text" margin="0" width="30px" src="{{asset('/img/linkedin.svg')}}" alt=""></span> kancurochat</a></li>
+            <li><a class="hover:text-black"  href="#"><span><img class="inline" margin="0" width="30px" src="{{asset('/img/github.svg')}}" alt=""></span> kancurochat</a></li>
+            <li><a class="hover:text-black"  href="mailto:hamernad@gmail.com"><span><img class="inline white-text" margin="0" width="30px" src="{{asset('/img/email.svg')}}" alt=""></span> hamernad@gmail.com</a></li>
+            <li><a class="hover:text-black"  href="#"><span><img class="inline" margin="0" width="30px" src="{{asset('/img/linkedin.svg')}}" alt=""></span> kancurochat</a></li>
         </ul>
     </div>
 </footer>

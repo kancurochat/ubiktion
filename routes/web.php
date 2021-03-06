@@ -3,6 +3,9 @@
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SpotController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
+use App\Http\Resources\Spot;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,8 +38,27 @@ Route::get('contact', function () {
     return view('contact');
 })->middleware(['auth'])->name('contact');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::get('spots', [SpotController::class, 'spots'])->middleware(['auth'])->name('spots');
+
+Route::get('spots/show/{id}', [SpotController::class, 'showSpot'])->name('spots.show');
+
+Route::get('spots/edit/{id}', [SpotController::class, 'getEditSpot'])->name('spots.edit');
+
+Route::put('spots/edit/{id}', [SpotController::class, 'updateSpot'])->name('spots.update');
+
+Route::delete('spots/delete/{id}', [SpotController::class, 'deleteSpot'])->name('spots.destroy');
+
+/* Route::get('roles', function () {
+    return view('admin.roles.index');
+})->middleware(['auth'])->name('roles'); */
+
+Route::get('messages', function () {
+    return view('admin.messages.index');
+})->middleware(['auth'])->name('messages');
+
+Route::group(['middleware' => ['auth']], function() {
+    Route::resource('roles', RoleController::class);
+    Route::resource('users', UserController::class);
+});
 
 require __DIR__.'/auth.php';

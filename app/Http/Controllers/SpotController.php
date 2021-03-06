@@ -69,6 +69,12 @@ class SpotController extends Controller
         return view('add', compact('types'));
     }
 
+    public function spots() {
+        $spots = Spot::all();
+        
+        return view('admin.spots.index', compact('spots'));
+    }
+
     public function createSpot(SpotFormRequest $request)
     {
 
@@ -94,6 +100,10 @@ class SpotController extends Controller
 
         $spot->photo = asset('storage/' . $request->file('foto')->hashName());
 
+        // Coge el id del usuario que está logeado en la aplicación
+        $spot->user_id = auth()->user()->id;
+    
+        $spot->spot_type_id = $request->input('spot_type_id');
         $spot->description = $request->input('descripción');
 
         $spot->save();
@@ -101,4 +111,40 @@ class SpotController extends Controller
         $request->session()->flash('correcto', 'Se ha creado el registro');
         return redirect('/');
     }
+
+    public function showSpot($id) {
+
+        $spot = Spot::find($id);
+
+        return view('admin.spots.show', compact('spot'));
+    }
+
+    public function getEditSpot($id) {
+        $spot = Spot::find($id);
+
+        return view('admin.spots.edit', compact('spot'));
+    }
+
+    public function updateSpot(Request $request, $id){
+        $spot = Spot::find($id);
+
+        if($request->file('photo') != null){
+            $request->file('photo')->store('public');
+            $spot->photo = asset('storage/' . $request->file('photo')->hashName());
+        }
+
+        $spot->description = $request->input('description');
+
+        $spot->save();
+
+        return redirect('spots');
+    }
+
+    public function deleteSpot($id) {
+        $spot = Spot::find($id);
+        $spot->delete();
+
+        return redirect('spots');
+    }
+
 }

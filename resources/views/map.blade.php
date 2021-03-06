@@ -4,21 +4,27 @@
 
 @section('content')
 @if(Session::has('correcto'))
-
-<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-    <strong class="font-bold">{{ Session::get('correcto') }}</strong>
-    {{-- <span class="block sm:inline">Something seriously bad happened.</span> --}}
-    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-        <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20">
-            <title>Close</title>
-            <path
-                d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
-        </svg>
+<div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded relative mb-4">
+    <span class="inline-block align-middle mr-8">
+        <strong class="font-bold">{{ Session::get('correcto') }}</strong>
     </span>
+    <button
+        class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none"
+        onclick="closeAlert(event)">
+        <span>×</span>
+    </button>
 </div>
-
+<script>
+    function closeAlert(event){
+      let element = event.target;
+      while(element.nodeName !== "BUTTON"){
+        element = element.parentNode;
+      }
+      element.parentNode.parentNode.removeChild(element.parentNode);
+    }
+</script>
 @endif
+
 <div id="mapid" class="mx-10"></div>
 <script>
     var map = L.map('mapid').setView([28.4965, -13.8622], 13);
@@ -28,5 +34,43 @@
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>'  
 
     }).addTo(map);
+
+    // Ajax para mostrar spots en el mapa
+    $.ajax ( {
+
+        dataType: "json",
+
+        url: "api/spots",
+
+        success: function(result){
+
+            console.log(result);
+
+            result.spots.forEach(function(spot){
+
+                let spotType;
+                
+                if(spot.spot_type_id == 1) {
+                    spotType = ' Punto Accesible';
+                } else {
+                    spotType = 'Punto No Accesible';
+                };
+
+                let card = '<div class="max-w-xs overflow-hidden rounded-lg shadow-lg">' +
+                                '<img class="object-cover w-full h-48" src="' + spot.photo + '"/>' +
+                                '<div class="px-6 py-4">' +
+                                    '<h4 class="mb-3 text-xl font-semibold tracking-tight text-gray-800">' + spotType + '</h4>' +
+                                    '<p class="leading-normal text-gray-700">' + spot.description + '</p>' +
+                                '</div>' +
+                            '</div>';
+
+                L.marker([spot.latitude, spot.longitude], {title: spot.id}).addTo(map).bindPopup(
+                    card
+                    );
+
+            });
+        }
+
+    }); 
 </script>
 @endsection
