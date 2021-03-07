@@ -69,6 +69,7 @@ class SpotController extends Controller
         return view('add', compact('types'));
     }
 
+    // Envía todos los spots a la tabla de administración
     public function spots() {
         $spots = Spot::all();
         
