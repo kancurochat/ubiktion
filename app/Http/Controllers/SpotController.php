@@ -82,11 +82,11 @@ class SpotController extends Controller
         $spot = new Spot();
 
         // Si la imagen posee metadatos de geolocalización, se recogen y se almacenan
-        if (Image::make($request->file('foto'))->exif('GPSVersion') != null) {
+        if (exif_read_data($request->file('foto'))['GPSVersion'] != null) {
             $request->file('foto')->store('public');
 
             // Recoge los metadatos de la foto
-            $exif = Image::make($request->file('foto'))->exif();
+            $exif = exif_read_data($request->file('foto'));
 
             // Almacena los datos de latitud y longitud
             $spot->latitude = SpotController::gps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
