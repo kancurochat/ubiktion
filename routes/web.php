@@ -37,7 +37,7 @@ Route::middleware(['verified'])->group(function () {
     // Manda los datos del formulario de creación
     Route::post('add', [
         SpotController::class, 'createSpot'
-    ])->middleware(['auth'])->name('add');
+    ])->middleware(['auth']);
 
     Route::get('contact', [MessageController::class, 'getView'])->middleware(['auth'])->name('contact');
 
