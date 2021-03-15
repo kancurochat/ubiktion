@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Spot;
 use App\Http\Requests\SpotFormRequest;
 use App\Models\SpotType;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class SpotController extends Controller
 {
@@ -70,9 +72,10 @@ class SpotController extends Controller
     }
 
     // Envía todos los spots a la tabla de administración
-    public function spots() {
+    public function spots()
+    {
         $spots = Spot::all();
-        
+
         return view('admin.spots.index', compact('spots'));
     }
 
@@ -83,7 +86,12 @@ class SpotController extends Controller
         $spot = new Spot();
 
         // Si la imagen posee metadatos de geolocalización, se recogen y se almacenan
-        if (exif_read_data($request->file('foto'))['GPSVersion'] != null) {
+        if (
+            isset(exif_read_data($request->file('foto'))['GPSLatitudeRef'])
+            && isset(exif_read_data($request->file('foto'))['GPSLongitudeRef'])
+            && isset(exif_read_data($request->file('foto'))['GPSLongitude'])
+            && isset(exif_read_data($request->file('foto'))['GPSLatitude'])
+        ) {
             $request->file('foto')->store('public');
 
             // Recoge los metadatos de la foto
@@ -103,7 +111,7 @@ class SpotController extends Controller
 
         // Coge el id del usuario que está logeado en la aplicación
         $spot->user_id = auth()->user()->id;
-    
+
         $spot->spot_type_id = $request->input('spot_type_id');
         $spot->description = $request->input('descripción');
 
@@ -113,23 +121,26 @@ class SpotController extends Controller
         return redirect('/');
     }
 
-    public function showSpot($id) {
+    public function showSpot($id)
+    {
 
         $spot = Spot::find($id);
 
         return view('admin.spots.show', compact('spot'));
     }
 
-    public function getEditSpot($id) {
+    public function getEditSpot($id)
+    {
         $spot = Spot::find($id);
 
         return view('admin.spots.edit', compact('spot'));
     }
 
-    public function updateSpot(Request $request, $id){
+    public function updateSpot(Request $request, $id)
+    {
         $spot = Spot::find($id);
 
-        if($request->file('photo') != null){
+        if ($request->file('photo') != null) {
             $request->file('photo')->store('public');
             $spot->photo = asset('storage/' . $request->file('photo')->hashName());
         }
@@ -141,11 +152,20 @@ class SpotController extends Controller
         return redirect('spots');
     }
 
-    public function deleteSpot($id) {
+    public function deleteSpot($id)
+    {
+        // Encuentra el spot a eliminar
         $spot = Spot::find($id);
+
+        // Divide la url de la imagen en 3 partes
+        $path = explode('storage/', Storage::path($spot->photo));
+
+        // Elimina la imagen
+        Storage::delete('public/'. $path[2]);
+
+        // Elimina el registro
         $spot->delete();
 
         return redirect('spots');
     }
-
 }
