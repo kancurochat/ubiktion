@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Spot;
 use App\Http\Requests\SpotFormRequest;
 use App\Models\SpotType;
-use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 
 class SpotController extends Controller
 {
@@ -60,6 +60,18 @@ class SpotController extends Controller
         return $coordinate;
     }
 
+    public function convert($from, $to)
+    {
+        $command = 'convert '
+            . $from
+            . ' '
+            . '-resize 50% -sampling-factor 4:2:0 -strip -quality 65'
+            . ' '
+            . $to;
+
+        return $command;
+    }
+
     // Se manda el formulario de los puntos
     public function getView()
     {
@@ -92,14 +104,31 @@ class SpotController extends Controller
             && isset(exif_read_data($request->file('foto'))['GPSLongitude'])
             && isset(exif_read_data($request->file('foto'))['GPSLatitude'])
         ) {
-            $request->file('foto')->store('public');
-
             // Recoge los metadatos de la foto
             $exif = exif_read_data($request->file('foto'));
 
             // Almacena los datos de latitud y longitud
             $spot->latitude = SpotController::gps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
             $spot->longitude = SpotController::gps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
+
+            /* 
+            
+                Instalar convert y jpegoptim en el VPS 
+                para que funcione
+            */
+
+            // Se almacena la foto subida en el servidor
+            $path = $request->file('foto')->store('public');
+
+            // Almaceno la ruta donde se almacena la foto
+            $optimized = Storage::path($path);
+
+            // Genero una imagen comprimida en la ruta donde se almacenó la foto
+            ImageOptimizer::optimize(Storage::path($path),  $optimized);
+
+            // Ejecuto un comando en el servidor para comprimir aún más la foto
+            exec($this->convert($optimized, $optimized));
+
         } else {
             // Si no, se manda un flash con el mensaje de error
             // y se redirecciona al formulario
@@ -161,7 +190,7 @@ class SpotController extends Controller
         $path = explode('storage/', Storage::path($spot->photo));
 
         // Elimina la imagen
-        Storage::delete('public/'. $path[2]);
+        Storage::delete('public/' . $path[2]);
 
         // Elimina el registro
         $spot->delete();
