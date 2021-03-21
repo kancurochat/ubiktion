@@ -115,6 +115,7 @@ class SpotController extends Controller
             
                 Instalar convert y jpegoptim en el VPS 
                 para que funcione
+
             */
 
             // Se almacena la foto subida en el servidor
@@ -170,7 +171,28 @@ class SpotController extends Controller
         $spot = Spot::find($id);
 
         if ($request->file('photo') != null) {
-            $request->file('photo')->store('public');
+
+            // Elimino la foto anterior
+            $previus = explode('storage/', Storage::path($spot->photo));
+            Storage::delete('public/' . $previus[2]);
+
+            // Se almacena la foto subida en el servidor
+            $path = $request->file('photo')->store('public');
+
+            // Almaceno la ruta donde se almacena la foto
+            $optimized = Storage::path($path);
+
+            // Genero una imagen comprimida en la ruta donde se almacenó la foto
+            ImageOptimizer::optimize(Storage::path($path),  $optimized);
+
+            // Ejecuto un comando en el servidor para comprimir aún más la foto
+            exec($this->convert($optimized, $optimized));
+
+            // Elimino la foto anterior
+            $previus = explode('storage/', Storage::path($spot->photo));
+            Storage::delete('public/' . $previus[2]);
+
+            // Asigno la nueva foto al objeto spot
             $spot->photo = asset('storage/' . $request->file('photo')->hashName());
         }
 
